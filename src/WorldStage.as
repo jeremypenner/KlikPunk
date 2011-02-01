@@ -33,9 +33,8 @@ package
 
 		private var imgdir: Imgdir;
 		private var drag: Drag;
-		private var absd: String;
-		private var relf: String;
-		private var rgreld: Array;
+		private var urff: String;
+		private var rgurpd: Array;
 		private var alarmImgdir: Tween;
 		private var rgsidebar: Vector.<Sidebar>;
 		
@@ -46,14 +45,15 @@ package
 		public var tokSelected: Token;
 		public var zoom: Number;
 		public var pointView: Point;
+		public var uabd: String;
 		
-		public function WorldStage(absf: String) 
+		public function WorldStage(uabf: String) 
 		{
 			super();
-			var match:* = /(.*\/)([^\/]*)$/.exec(absf);
-			this.absd = match[1];
-			this.relf = match[2];
-			this.rgreld = [];
+			var match:* = /(.*\/)([^\/]*)$/.exec(uabf);
+			this.uabd = match[1];
+			this.urff = match[2];
+			this.rgurpd = [];
 			this.rgsidebar = new Vector.<Sidebar>();
 			
 			var sidebarSave: Sidebar = AddSidebar(new Sidebar(FP.width - 32, FP.width, 0, 0, 32, 32, LAYER_SAVE, false, false));
@@ -69,6 +69,7 @@ package
 			Chdir(null);
 			ToggleUI();
 			Load();
+			addTween(new Alarm(3, FileWatcher.CheckAll, Tween.LOOPING), true);
 		}
 		
 		public function KillToken(tok: Token): void
@@ -90,18 +91,23 @@ package
 		{
 			var entity: Entity;
 			if (ev.bmp === null)
-				entity = new Folder(SidebarFind(LAYER_SIDEBAR), ev.rel);
+				entity = new Folder(SidebarFind(LAYER_SIDEBAR), ev.urp);
 			else
-				entity = new Factory(SidebarFind(LAYER_SIDEBAR), ev.rel, ev.bmp);
+				entity = new Factory(SidebarFind(LAYER_SIDEBAR), ev.urp, ev.bmp);
 		}
-		public function RelFull(relf:String = null): String
+		public function UabFromUrf(urf:String): String
 		{
-			var rel:String = rgreld.join(File.separator);
-			if (relf !== null)
-				rel = rel + File.separator + relf;
-			return rel;
+			return uabd + urf;
 		}
-		public function Chdir(reld: String): void
+		public function UrfFromUrp(urp:String): String
+		{
+			return Urfd() + urp;
+		}
+		public function Urfd(): String
+		{
+			return rgurpd.join("/") + "/";
+		}
+		public function Chdir(urpd: String): void
 		{
 			if (alarmImgdir !== null)
 			{
@@ -115,19 +121,19 @@ package
 					entity.active = false;
 				}
 			}
-			if (reld === "..")
-				rgreld = rgreld.slice(0, rgreld.length - 1);
-			else if (reld !== null)
-				rgreld.push(reld);
+			if (urpd === "..")
+				rgurpd = rgurpd.slice(0, rgurpd.length - 1);
+			else if (urpd !== null)
+				rgurpd.push(urpd);
 			
-			imgdir = new Imgdir(absd + RelFull());
+			imgdir = new Imgdir(UabFromUrf(Urfd()));
 			imgdir.addEventListener(Imgdir.LOADED, OnNewImg);
 			imgdir.Update();
 			alarmImgdir = this.addTween(new Alarm(3, imgdir.Update, Tween.LOOPING), true);
 			
-			AddSidebar(new Sidebar(0, -32, 0, 0, 32, FP.height, LAYER_SIDEBAR, reld !== null /*fStartShown*/, true));
+			AddSidebar(new Sidebar(0, -32, 0, 0, 32, FP.height, LAYER_SIDEBAR, urpd !== null /*fStartShown*/, true));
 
-			if (rgreld.length > 0)
+			if (rgurpd.length > 0)
 				OnNewImg(new EvNewImg(Imgdir.LOADED, "..", null));
 		}
 		private function SidebarFind(layer: int):Sidebar
@@ -242,14 +248,14 @@ package
 		public function Save(): void
 		{
 			var stream: FileStream = new FileStream();
-			stream.open(new File(absd + File.separator + relf), FileMode.WRITE);
+			stream.open(new File(UabFromUrf(urff)), FileMode.WRITE);
 			stream.writeUTFBytes(GenXML().toXMLString());
 			stream.close();
 			ShowMsg("Saved.");
 		}
 		public function Load(): void
 		{
-			var file: File = new File(absd + File.separator + relf);
+			var file: File = new File(UabFromUrf(urff));
 			if (file.exists)
 			{
 				var stream: FileStream = new FileStream();
@@ -268,7 +274,7 @@ package
 		private function LoadToken(xml: XML, itoken: int, rgtoken:Object): void
 		{
 			trace("loading " + xml.@path);
-			Imgdir.LoadBmp(new File(absd + File.separator + xml.@path), 
+			Imgdir.LoadBmp(new File(UabFromUrf(xml.@path)), 
 				function(bmp: BitmapData, file: File):void {
 					trace("loadtoken: " + xml.@path);
 					var token: Token = new Token(bmp, xml.@path.toString(), int(xml.@x), int(xml.@y), xml);

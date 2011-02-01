@@ -17,21 +17,21 @@ package
 		[Embed(source = '../assets/folder.png')]
 		private const bmpFolder:Class;
 		
-		private var reld: String;
+		private var urpd: String;
 		private var text: Text;
 		
-		public function Folder(sidebar: Sidebar, reld: String) 
+		public function Folder(sidebar: Sidebar, urpd: String) 
 		{
 			super(sidebar, bmpFolder);
-			text = new Text(reld, 2, (img.scaledHeight / 2) - 6);
+			text = new Text(urpd, 2, (img.scaledHeight / 2) - 6);
 			text.color = 0x4444FF;
 			addGraphic(text);
 
-			this.reld = reld;
+			this.urpd = urpd;
 		}
 		override public function OnClick():void 
 		{
-			WorldStage(world).Chdir(this.reld);
+			WorldStage(world).Chdir(this.urpd);
 		}
 		override public function Fade(pct:Number):void
 		{

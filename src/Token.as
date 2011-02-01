@@ -1,10 +1,13 @@
 package  
 {
 	import flash.display.BitmapData;
+	import flash.filesystem.File;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Image;
+	import net.flashpunk.Tween;
+	import net.flashpunk.tweens.misc.Alarm;
 	import net.flashpunk.utils.Draw;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
@@ -17,16 +20,18 @@ package
 	{
 		private var drag: Drag;
 		public var posReal: Point;
-		private var relf: String;
+		private var urff: String;
 		private var xml: XML;
-		public function Token(source:BitmapData, relf: String, x: int, y: int, xml:XML = null) 
+		private var filewatcher: FileWatcher;
+		
+		public function Token(source:BitmapData, urff: String, x: int, y: int, xml:XML = null) 
 		{
 			this.posReal = new Point(x, y);
 			super(x, y, new Image(source));
 			this.type = "Token";
 			this.layer = WorldStage.LAYER_TOKENS;
 			this.drag = null;
-			this.relf = relf;
+			this.urff = urff;
 			if (xml === null)
 				this.xml = XML("<token/>");
 			else
@@ -36,6 +41,13 @@ package
 		{
 			return WorldStage(this.world).tokSelected === this;
 		}
+		override public function added():void 
+		{
+			super.added();
+			FixupZoom();
+			filewatcher = FileWatcher.Get(WorldStage(world).UabFromUrf(urff));
+			filewatcher.Register(OnFileChanged, this);
+		}
 		override public function removed():void 
 		{
 			super.removed();
@@ -44,11 +56,11 @@ package
 				drag.Done();
 				drag = null;
 			}
+			filewatcher.Unregister(this);
 		}
-		override public function added():void 
+		public function OnFileChanged(bmp: BitmapData, file: File): void
 		{
-			super.added();
-			FixupZoom();
+			graphic = new Image(bmp);
 		}
 		private function FixupZoom(): Number
 		{
@@ -99,9 +111,9 @@ package
 					{
 						drag = Drag.Claim();
 						if (drag !== null)
-							trace("drag claimed for " + relf);
+							trace("drag claimed for " + urff);
 						else
-							trace("drag failed for " + relf);
+							trace("drag failed for " + urff);
 					}
 
 					if (drag !== null)
@@ -129,7 +141,7 @@ package
 			var xml: XML = this.xml.copy();
 			xml.@x = int(posReal.x);
 			xml.@y = int(posReal.y);
-			xml.@path = relf;
+			xml.@path = urff;
 			return xml;
 		}
 	}

@@ -9,11 +9,11 @@ package
 	 */
 	public class EvNewImg extends Event
 	{
-		public var rel: String;
+		public var urp: String;
 		public var bmp: BitmapData;
-		public function EvNewImg(type: String, rel: String, bmp: BitmapData) 
+		public function EvNewImg(type: String, urp: String, bmp: BitmapData) 
 		{
-			this.rel = rel;
+			this.urp = urp;
 			this.bmp = bmp;
 			super(type);
 		}

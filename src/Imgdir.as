@@ -18,15 +18,15 @@ package
 	{
 		public static const LOADED: String = "ImgLoaded";
 		private var dir: File;
-		private var mprelf_bmp: Object;
-		private var rgreld: Object;
+		private var mpurpf_bmp: Object;
+		private var rgurpd: Object;
 		public function Imgdir(url: String) 
 		{
 			trace("imgdir: " + url);
 			this.dir = new File(url);
 			this.dir.addEventListener(FileListEvent.DIRECTORY_LISTING, OnDirUpdate);
-			this.mprelf_bmp = { };
-			this.rgreld = { };
+			this.mpurpf_bmp = { };
+			this.rgurpd = { };
 		}
 		
 		public function Update() : void
@@ -38,13 +38,13 @@ package
 		{
 			for each (var file: File in ev.files)
 			{
-				var rel: String = file.name;
-				if (file.isDirectory && !rgreld[rel])
+				var urp: String = file.name;
+				if (file.isDirectory && !rgurpd[urp])
 				{
-					rgreld[rel] = true;
-					dispatchEvent(new EvNewImg(LOADED, rel, null));
+					rgurpd[urp] = true;
+					dispatchEvent(new EvNewImg(LOADED, urp, null));
 				}
-				else if (!file.isDirectory && /\.(png|gif|jpg|jpeg)$/i.test(rel) && !mprelf_bmp[rel])
+				else if (!file.isDirectory && /\.(png|gif|jpg|jpeg)$/i.test(urp) && !mpurpf_bmp[urp])
 					LoadBmp(file, OnBmpLoaded);
 			}
 		}
@@ -67,7 +67,7 @@ package
 		}
 		private function OnBmpLoaded(bmp: BitmapData, file: File) : void
 		{
-			mprelf_bmp[file.name] = bmp;
+			mpurpf_bmp[file.name] = bmp;
 			this.dispatchEvent(new EvNewImg(LOADED, file.name, bmp));
 		}
 	}
