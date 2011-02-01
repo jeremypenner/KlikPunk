@@ -15,7 +15,7 @@ package
 		private var size: Number;
 		private var rgobj_dgOnChange: Array;
 		
-		private static var mpabsf_filewatcher:Object = { };
+		private static var mpuabf_filewatcher:Object = { };
 		
 		public function FileWatcher(file: File)
 		{
@@ -24,19 +24,20 @@ package
 			this.size = file.size;
 			this.rgobj_dgOnChange = [];
 		}
-		public static function Get(absf: String): FileWatcher 
+		public static function Get(uabf: String): FileWatcher 
 		{
-			var filewatcher:FileWatcher = mpabsf_filewatcher[absf];
+			var file: File = new File(uabf);
+			var filewatcher:FileWatcher = mpuabf_filewatcher[file.url];
 			if (filewatcher === null)
 			{
-				filewatcher = new FileWatcher(new File(absf));
-				mpabsf_filewatcher[absf] = filewatcher;
+				filewatcher = new FileWatcher(file);
+				mpuabf_filewatcher[file.url] = filewatcher;
 			}
 			return filewatcher;
 		}
 		public static function CheckAll():void 
 		{
-			for each(var filewatcher:FileWatcher in mpabsf_filewatcher)
+			for each(var filewatcher:FileWatcher in mpuabf_filewatcher)
 				filewatcher.Check();
 		}
 		public function Register(dgOnChange: Function, obj:*):void {
@@ -45,7 +46,7 @@ package
 		public function Unregister(obj:*):void {
 			rgobj_dgOnChange = rgobj_dgOnChange.filter(function(obj_dgOnChange:Array, _:*, __:*):Boolean { return (obj_dgOnChange[0] !== obj); } );
 			if (rgobj_dgOnChange.length == 0)
-				delete mpabsf_filewatcher[file.nativePath];
+				delete mpuabf_filewatcher[file.url];
 		}
 		public function Check():void
 		{
