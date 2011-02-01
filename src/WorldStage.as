@@ -25,6 +25,8 @@ package
 	{
 		[Embed(source = '../assets/save.png')]
 		private const bmpSave:Class;
+		[Embed(source = '../assets/zoom.png')]
+		private const bmpZoom:Class;
 
 		public static const LAYER_TOKENS: int = 100;
 		public static const LAYER_SIDEBAR: int = 50;
@@ -56,8 +58,9 @@ package
 			this.rgurpd = [];
 			this.rgsidebar = new Vector.<Sidebar>();
 			
-			var sidebarSave: Sidebar = AddSidebar(new Sidebar(FP.width - 32, FP.width, 0, 0, 32, 32, LAYER_SAVE, false, false));
+			var sidebarSave: Sidebar = AddSidebar(new Sidebar(FP.width - 32, FP.width, FP.height - 64, FP.height - 64, 32, 64, LAYER_SAVE, false, false));
 			new Button(sidebarSave, bmpSave, Save);
+			new Button(sidebarSave, bmpZoom, ResetZoom);
 		
 			sidebarMsg = null;
 			alarmMsg = null;
@@ -244,7 +247,12 @@ package
 				alarmMsg = Alarm(addTween(new Alarm(2, function():void { sidebarMsg.Toggle(ShowNextMsg); }, Tween.ONESHOT), true));
 			}
 		}
-				
+		private function ResetZoom(): void
+		{
+			var pointMiddle: Point = new Point(FP.halfWidth, FP.halfHeight);
+			pointView = PointRealFromScreen(pointMiddle).subtract(pointMiddle);
+			zoom = 1;
+		}
 		public function Save(): void
 		{
 			var stream: FileStream = new FileStream();
