@@ -1,5 +1,4 @@
 - fix scrollwheel sensitivity
-- zoom to 100% (magnifying glass icon?)
 - show 0,0, maybe some other griddy options
 
 - finalize "library" notion
@@ -10,3 +9,5 @@
 
 DONE:
 - auto image reloading
+- panning
+- zoom to 100% (magnifying glass icon?)
