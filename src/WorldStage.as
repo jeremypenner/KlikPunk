@@ -34,7 +34,7 @@ package
 		public static const LAYER_MSG: int = 70;
 
 		private var imgdir: Imgdir;
-		private var drag: Drag;
+		private var dragView: Drag;
 		private var urff: String;
 		private var rgurpd: Array;
 		private var alarmImgdir: Tween;
@@ -68,7 +68,7 @@ package
 			
 			zoom = 1;
 			pointView = new Point(0, 0);
-			drag = null;
+			dragView = null;
 			Chdir(null);
 			ToggleUI();
 			Load();
@@ -173,22 +173,39 @@ package
 		override public function update():void 
 		{
 			var dyFactory:int = 0;
+			if (Input.mouseUp && dragView !== null)
+			{
+				trace("drag done");
+				dragView.Done();
+				dragView = null;
+			}
+
 			if (Input.mousePressed)
 			{
-				var rgtok: Array = [];
-				getLayer(LAYER_TOKENS, rgtok);
-				tokSelected = null;
-				// getLayer returns tokens in draw order, which means furthest back first
-				for (var itok:int = rgtok.length - 1; itok >= 0; itok --)
+				if (Input.check(Key.SHIFT))
+					dragView = Drag.Claim();
+				else
 				{
-					var tok: Token = rgtok[itok];
-					if (tok.collidePoint(tok.x, tok.y, Input.mouseX, Input.mouseY))
+					var rgtok: Array = [];
+					getLayer(LAYER_TOKENS, rgtok);
+					tokSelected = null;
+					// getLayer returns tokens in draw order, which means furthest back first
+					for (var itok:int = rgtok.length - 1; itok >= 0; itok --)
 					{
-						tokSelected = tok;
-						break;
+						var tok: Token = rgtok[itok];
+						if (tok.collidePoint(tok.x, tok.y, Input.mouseX, Input.mouseY))
+						{
+							tokSelected = tok;
+							break;
+						}
 					}
+					trace("clicked on " + tokSelected);
 				}
-				trace("clicked on " + tokSelected);
+			}
+			if (dragView !== null)
+			{
+				pointView = pointView.subtract(dragView.Delta(zoom));
+				dragView.Update();
 			}
 			if (Input.pressed(Key.TAB))
 				ToggleUI();
