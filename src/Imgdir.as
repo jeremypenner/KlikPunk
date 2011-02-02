@@ -19,14 +19,14 @@ package
 		public static const LOADED: String = "ImgLoaded";
 		private var dir: File;
 		private var mpurpf_bmp: Object;
-		private var rgurpd: Object;
+		private var rgdirname: Object;
 		public function Imgdir(url: String) 
 		{
 			trace("imgdir: " + url);
 			this.dir = new File(url);
 			this.dir.addEventListener(FileListEvent.DIRECTORY_LISTING, OnDirUpdate);
 			this.mpurpf_bmp = { };
-			this.rgurpd = { };
+			this.rgdirname = { };
 		}
 		
 		public function Update() : void
@@ -38,13 +38,13 @@ package
 		{
 			for each (var file: File in ev.files)
 			{
-				var urp: String = file.name;
-				if (file.isDirectory && !rgurpd[urp])
+				if (file.isDirectory && !rgdirname[file.name])
 				{
-					rgurpd[urp] = true;
-					dispatchEvent(new EvNewImg(LOADED, urp, null));
+					var urpd: String = file.name + "/";
+					rgdirname[urpd] = true;
+					dispatchEvent(new EvNewImg(LOADED, urpd, null));
 				}
-				else if (!file.isDirectory && /\.(png|gif|jpg|jpeg)$/i.test(urp) && !mpurpf_bmp[urp])
+				else if (!file.isDirectory && /\.(png|gif|jpg|jpeg)$/i.test(file.name) && !mpurpf_bmp[file.name])
 					LoadBmp(file, OnBmpLoaded);
 			}
 		}

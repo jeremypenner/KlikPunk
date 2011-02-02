@@ -23,7 +23,7 @@ package
 		public function Folder(sidebar: Sidebar, urpd: String) 
 		{
 			super(sidebar, bmpFolder);
-			text = new Text(urpd, 2, (img.scaledHeight / 2) - 6);
+			text = new Text(urpd.slice(0, urpd.length - 1), 2, (img.scaledHeight / 2) - 6);
 			text.color = 0x4444FF;
 			addGraphic(text);
 

@@ -1,3 +1,21 @@
+// Hungarian-to-English dictionary
+
+// bits of paths are represented as strings, with the following schema determining the name:
+// u(ab|rp|rf)(d|f)?
+// u: url
+// ab: absolute path (includes beginning of url)
+// rp: partial relative path -- indicates a single "level" of a path
+// rf: full relative path -- a path that is intended to be put on the end of an implied absolute path to make a complete absolute path
+// d: directory -- always ends with a slash
+// f: file
+// if the function accepts either a directory or file, neither d nor f is specified
+// examples:
+// file:///c/foo/bar/baz/ -- uabd
+// file:///c/foo/bar.baz  -- uabf
+// bar/baz.foo			  -- urff
+// bar/baz/               -- urfd
+// bar/                   -- urpd
+
 package  
 {
 	import flash.display.BitmapData;
@@ -74,7 +92,6 @@ package
 			Load();
 			addTween(new Alarm(3, FileWatcher.CheckAll, Tween.LOOPING), true);
 		}
-		
 		public function KillToken(tok: Token): void
 		{
 			remove(tok);
@@ -82,6 +99,9 @@ package
 			if (tokSelected === tok)
 				tokSelected = null;
 		}
+		
+		// pointScreen - a position on the screen
+		// pointReal - a position on the stage
 		public function PointRealFromScreen(pointScreen: Point): Point
 		{
 			return new Point((pointScreen.x / zoom) + pointView.x, (pointScreen.y / zoom) + pointView.y);
@@ -98,6 +118,7 @@ package
 			else
 				entity = new Factory(SidebarFind(LAYER_SIDEBAR), ev.urp, ev.bmp);
 		}
+				
 		public function UabFromUrf(urf:String): String
 		{
 			return uabd + urf;
@@ -108,7 +129,7 @@ package
 		}
 		public function Urfd(): String
 		{
-			return rgurpd.join("/") + "/";
+			return rgurpd.join("") + "/";
 		}
 		public function Chdir(urpd: String): void
 		{
@@ -124,7 +145,7 @@ package
 					entity.active = false;
 				}
 			}
-			if (urpd === "..")
+			if (urpd === "../")
 				rgurpd = rgurpd.slice(0, rgurpd.length - 1);
 			else if (urpd !== null)
 				rgurpd.push(urpd);
@@ -137,7 +158,7 @@ package
 			AddSidebar(new Sidebar(0, -32, 0, 0, 32, FP.height, LAYER_SIDEBAR, urpd !== null /*fStartShown*/, true));
 
 			if (rgurpd.length > 0)
-				OnNewImg(new EvNewImg(Imgdir.LOADED, "..", null));
+				OnNewImg(new EvNewImg(Imgdir.LOADED, "../", null));
 		}
 		private function SidebarFind(layer: int):Sidebar
 		{
@@ -335,5 +356,4 @@ package
 			return xml;
 		}
 	}
-
 }
