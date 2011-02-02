@@ -28,5 +28,4 @@ package
 		public function OnClick(): void { }
 		public function Fade(pct:Number):void { }
 	}
-
 }

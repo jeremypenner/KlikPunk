@@ -1,7 +1,7 @@
 package  
 {
 	/**
-	 * ...
+	 * Button widget; when clicked, calls a function.
 	 * @author jjp
 	 */
 	public class Button extends EntitySidebarImg

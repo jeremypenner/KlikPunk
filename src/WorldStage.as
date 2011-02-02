@@ -16,6 +16,13 @@
 // bar/baz/               -- urfd
 // bar/                   -- urpd
 
+// seriously I promise after fifteen minutes of working with this nomenclature it becomes second nature.
+
+// dg -- function pointer
+// rg -- list
+// mpfoo_bar -- a dictionary with foos for keys and bars for values
+// bmp -- a FlashPunk "source" like BitmapData or a Class of an embedded image
+
 package  
 {
 	import flash.display.BitmapData;
@@ -110,15 +117,8 @@ package
 		{
 			return new Point((pointReal.x - pointView.x) * zoom, (pointReal.y - pointView.y) * zoom);
 		}
-		private function OnNewImg(ev: EvNewImg) : void
-		{
-			var entity: Entity;
-			if (ev.bmp === null)
-				entity = new Folder(SidebarFind(LAYER_SIDEBAR), ev.urp);
-			else
-				entity = new Factory(SidebarFind(LAYER_SIDEBAR), ev.urp, ev.bmp);
-		}
-				
+		
+		// path management helpers
 		public function UabFromUrf(urf:String): String
 		{
 			return uabd + urf;
@@ -131,6 +131,8 @@ package
 		{
 			return rgurpd.join("") + "/";
 		}
+		
+		// left sidebar (folders and objects) management
 		public function Chdir(urpd: String): void
 		{
 			if (alarmImgdir !== null)
@@ -160,6 +162,16 @@ package
 			if (rgurpd.length > 0)
 				OnNewImg(new EvNewImg(Imgdir.LOADED, "../", null));
 		}
+		private function OnNewImg(ev: EvNewImg) : void
+		{
+			var entity: Entity;
+			if (ev.bmp === null)
+				entity = new Folder(SidebarFind(LAYER_SIDEBAR), ev.urp);
+			else
+				entity = new Factory(SidebarFind(LAYER_SIDEBAR), ev.urp, ev.bmp);
+		}
+
+		// sidebar management
 		private function SidebarFind(layer: int):Sidebar
 		{
 			for each (var sidebar:Sidebar in rgsidebar)
@@ -179,6 +191,7 @@ package
 					return true;
 				}, this);			
 		}
+		// add a sidebar to the world, replacing an existing sidebar on the same layer (if any).
 		private function AddSidebar(sidebar: Sidebar):Sidebar
 		{
 			RemoveSidebar(sidebar.LayerEntities());
@@ -191,9 +204,22 @@ package
 			for each (var sidebar: Sidebar in rgsidebar)
 				sidebar.Toggle();
 		}
+		
+		// top-level UI policy (token selection, sidebar clicking & scrolling, stage zooming & dragging, UI hiding & showing)
+		
+		// yes this is messy but at our current level of UI complexity it should be clear how all of the policies interact
+		// it would be "better" in some abstract sense if the world simply dispatched events to widget objects, but that's
+		// not how FlashPunk works so that's not how we do it either
+		
+		// leave this function cleaner than you found it
+		
+		// if it turns out we need more than one of a particular kind of widget please create a class and design a protocol for handing
+		// off control to that thing from this (like tokSelected)
+		
+		// I've passed the stage in my programming career where I would happily spend a few months designing a generic GUI library in
+		// response to this problem and consequently forget about my original goal; there are a few other projects doing that for me
 		override public function update():void 
 		{
-			var dyFactory:int = 0;
 			if (Input.mouseUp && dragView !== null)
 			{
 				trace("drag done");
@@ -203,9 +229,9 @@ package
 
 			if (Input.mousePressed)
 			{
-				if (Input.check(Key.SHIFT))
+				if (Input.check(Key.SHIFT)) // shift-click -- begin view dragging
 					dragView = Drag.Claim();
-				else
+				else 						// click -- select a token
 				{
 					var rgtok: Array = [];
 					getLayer(LAYER_TOKENS, rgtok);
@@ -223,15 +249,18 @@ package
 					trace("clicked on " + tokSelected);
 				}
 			}
-			if (dragView !== null)
+			if (dragView !== null) // shift-drag -- do view dragging
 			{
 				pointView = pointView.subtract(dragView.Delta(zoom));
 				dragView.Update();
 			}
+			
 			if (Input.pressed(Key.TAB))
 				ToggleUI();
+				
 			if (Input.mouseWheel)
 			{
+				// scroll a sidebar if overtop of a scrollable one
 				var fSidebarScrolled:Boolean = false;
 				for each (var sidebar: Sidebar in rgsidebar)
 				{
@@ -242,7 +271,7 @@ package
 						break;
 					}
 				}
-				if (!fSidebarScrolled)
+				if (!fSidebarScrolled) // otherwise adjust zoom
 				{
 					var zoomNew: Number = zoom + (Input.mouseWheelDelta / 100);
 					if (zoomNew <= 0)
@@ -258,6 +287,7 @@ package
 			super.update();
 		}
 		
+		// message management
 		public function ShowMsg(stMsg: String):void
 		{
 			rgmsg.push(stMsg);
@@ -285,12 +315,16 @@ package
 				alarmMsg = Alarm(addTween(new Alarm(2, function():void { sidebarMsg.Toggle(ShowNextMsg); }, Tween.ONESHOT), true));
 			}
 		}
+		
+		// right sidebar commands
 		private function ResetZoom(): void
 		{
 			var pointMiddle: Point = new Point(FP.halfWidth, FP.halfHeight);
 			pointView = PointRealFromScreen(pointMiddle).subtract(pointMiddle);
 			zoom = 1;
 		}
+		
+		// persistence (save/load/XML generation)
 		public function Save(): void
 		{
 			var stream: FileStream = new FileStream();

@@ -11,7 +11,9 @@ package
 	import net.flashpunk.utils.Ease;
 	
 	/**
-	 * ...
+	 * A sidebar contains a vertically-stacked list of EntitySidebars, can be shuffled on and off the screen, and can optionally be scrolled.
+	 * A sidebar claims two layers; the layer passed in to the sidebar constructor is where the EntitySidebars live, and layer + 1 is where
+	 * the sidebar entity lives.  NO OTHER ENTITIES SHOULD BE ON THESE LAYERS.
 	 * @author jjp
 	 */
 	public class Sidebar extends Entity

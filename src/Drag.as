@@ -3,7 +3,8 @@ package
 	import flash.geom.Point;
 	import net.flashpunk.utils.Input;
 	/**
-	 * ...
+	 * Keeps track of mouse dragging.  Has a global scheme that ensures only one thing is being dragged at a time.
+	 * Use Drag.Claim instead of new Drag().
 	 * @author jjp
 	 */
 	public class Drag

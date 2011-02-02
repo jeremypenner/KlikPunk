@@ -5,7 +5,8 @@ package
 	import flash.events.EventDispatcher;
 	import flash.filesystem.File;
 	/**
-	 * ...
+	 * Watches an image file for changes, reloads it if it sees any.  Uses a global reference-counting scheme to keep track of
+	 * which objects care about a particular file.  Use "FileWatcher.Get", not "new Filewatcher".
 	 * @author jjp
 	 */
 	public class FileWatcher

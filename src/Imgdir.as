@@ -11,7 +11,8 @@ package
 	import flash.filesystem.File;
 	import flash.net.URLRequest;
 	/**
-	 * ...
+	 * Monitors a directory for new image files placed in it, and sends out AS3 events containing their BitmapData when it finds some.
+	 * Also contians a static helper function for asynchronously loading image files.
 	 * @author jjp
 	 */
 	public class Imgdir extends EventDispatcher
