@@ -57,7 +57,8 @@ package
 		public static const LAYER_SIDEBAR: int = 50;
 		public static const LAYER_SAVE: int = 60;
 		public static const LAYER_MSG: int = 70;
-
+		public static const LAYER_OFFSTAGE: int = 1000;
+		
 		private var imgdir: Imgdir;
 		private var dragView: Drag;
 		private var urff: String;
@@ -90,6 +91,8 @@ package
 			sidebarMsg = null;
 			alarmMsg = null;
 			rgmsg = new Vector.<String>()
+		
+			add(new Offstage(LAYER_OFFSTAGE));
 			
 			zoom = 1;
 			pointView = new Point(0, 0);

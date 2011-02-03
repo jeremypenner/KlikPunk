@@ -1,6 +1,6 @@
 - fix scrollwheel sensitivity
-- show 0,0, maybe some other griddy options
 
+- decide on a license
 - finalize "library" notion
 - text objects
 
@@ -11,3 +11,4 @@ DONE:
 - auto image reloading
 - panning
 - zoom to 100% (magnifying glass icon?)
+- show 0,0, maybe some other griddy options
