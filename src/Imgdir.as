@@ -42,7 +42,7 @@ package
 				if (file.isDirectory && !rgdirname[file.name])
 				{
 					var urpd: String = file.name + "/";
-					rgdirname[urpd] = true;
+					rgdirname[file.name] = true;
 					dispatchEvent(new EvNewImg(LOADED, urpd, null));
 				}
 				else if (!file.isDirectory && /\.(png|gif|jpg|jpeg)$/i.test(file.name) && !mpurpf_bmp[file.name])
