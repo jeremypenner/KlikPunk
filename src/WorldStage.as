@@ -269,14 +269,14 @@ package
 				{
 					if (sidebar.fScrollable && sidebar.collidePoint(sidebar.x, sidebar.y, Input.mouseX, Input.mouseY))
 					{
-						sidebar.MoveSidebar(Input.mouseWheelDelta * 5);
+						sidebar.MoveSidebar(Input.mouseWheelDelta * 16);
 						fSidebarScrolled = true;
 						break;
 					}
 				}
 				if (!fSidebarScrolled) // otherwise adjust zoom
 				{
-					var zoomNew: Number = zoom + (Input.mouseWheelDelta / 100);
+					var zoomNew: Number = zoom + ((Input.mouseWheelDelta / 100) * zoom);
 					if (zoomNew <= 0)
 						zoomNew = 0.01;
 					// keep the point under the mouse cursor in the same place

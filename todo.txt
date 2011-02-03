@@ -1,8 +1,10 @@
-- fix scrollwheel sensitivity
-
 - decide on a license
+- create a readme
+- push to github
+
 - finalize "library" notion
 - text objects
+- UI refactoring?
 
 - tilemap
 - layers
@@ -12,3 +14,4 @@ DONE:
 - panning
 - zoom to 100% (magnifying glass icon?)
 - show 0,0, maybe some other griddy options
+- fix scrollwheel sensitivity
