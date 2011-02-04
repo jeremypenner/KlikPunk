@@ -290,14 +290,19 @@ package
 			super.update();
 		}
 		
+		private var dgOnMsgDone: Function;
 		// message management
-		public function ShowMsg(stMsg: String):void
+		public function ShowMsg(stMsg: String, dgOnMsgDone:Function = null):void
 		{
-			rgmsg.push(stMsg);
-			if (alarmMsg === null)
-				ShowNextMsg();
+			KillSidebarMsg();
+			this.dgOnMsgDone = dgOnMsgDone;
+			var x:int = FP.width / 8;
+			sidebarMsg = Sidebar(add(new Sidebar(x, x, FP.height - 45, FP.height, x * 6, 45, LAYER_MSG, false, false)));
+			new TextSidebar(sidebarMsg, stMsg, 2);
+			sidebarMsg.Toggle();
+			alarmMsg = Alarm(addTween(new Alarm(2, function():void { sidebarMsg.Toggle(KillSidebarMsg); }, Tween.ONESHOT), true));
 		}
-		private function ShowNextMsg(): void
+		private function KillSidebarMsg(): void
 		{
 			if (sidebarMsg !== null)
 			{
@@ -307,16 +312,9 @@ package
 			if (alarmMsg !== null && alarmMsg.active)
 				removeTween(alarmMsg);
 			alarmMsg = null;
-
-			if (rgmsg.length > 0)
-			{
-				var stMsg:String = rgmsg.shift();
-				var x:int = FP.width / 8;
-				sidebarMsg = Sidebar(add(new Sidebar(x, x, FP.height - 45, FP.height, x * 6, 45, LAYER_MSG, false, false)));
-				new TextSidebar(sidebarMsg, stMsg, 2);
-				sidebarMsg.Toggle();
-				alarmMsg = Alarm(addTween(new Alarm(2, function():void { sidebarMsg.Toggle(ShowNextMsg); }, Tween.ONESHOT), true));
-			}
+			if (dgOnMsgDone !== null)
+				dgOnMsgDone();
+			dgOnMsgDone = null;
 		}
 		
 		// right sidebar commands
