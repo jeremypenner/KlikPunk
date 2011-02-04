@@ -37,6 +37,10 @@ package
 			else
 				this.xml = xml;
 		}
+		public function FDirty():Boolean
+		{
+			return int(xml.@x) !== posReal.x || int(xml.@y) !== posReal.y;
+		}
 		public function FSelected(): Boolean
 		{
 			return WorldStage(this.world).tokSelected === this;
@@ -142,6 +146,7 @@ package
 			xml.@x = int(posReal.x);
 			xml.@y = int(posReal.y);
 			xml.@path = urff;
+			this.xml = xml;
 			return xml;
 		}
 	}

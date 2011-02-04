@@ -59,6 +59,7 @@ package
 		public static const LAYER_MSG: int = 70;
 		public static const LAYER_OFFSTAGE: int = 1000;
 		
+		private var dgWorldPrev: Function;
 		private var imgdir: Imgdir;
 		private var dragView: Drag;
 		private var urff: String;
@@ -75,9 +76,11 @@ package
 		public var pointView: Point;
 		public var uabd: String;
 		
-		public function WorldStage(uabf: String) 
+		public function WorldStage(uabf: String, dgWorldPrev: Function) 
 		{
 			super();
+			this.dgWorldPrev = dgWorldPrev;
+			
 			var match:* = /(.*\/)([^\/]*)$/.exec(uabf);
 			this.uabd = match[1];
 			this.urff = match[2];
@@ -221,6 +224,7 @@ package
 		
 		// I've passed the stage in my programming career where I would happily spend a few months designing a generic GUI library in
 		// response to this problem and consequently forget about my original goal; there are a few other projects doing that for me
+		private var fForceQuit:Boolean = false;
 		override public function update():void 
 		{
 			if (Input.mouseUp && dragView !== null)
@@ -260,6 +264,30 @@ package
 			
 			if (Input.pressed(Key.TAB))
 				ToggleUI();
+			if (Input.pressed(Key.ESCAPE))
+			{
+				var fDirty:Boolean = false;
+				if (!fForceQuit)
+				{
+					var rgtok: Array = [];
+					getLayer(LAYER_TOKENS, rgtok);
+					for each (var tok:Token in rgtok)
+					{
+						if (tok.FDirty())
+						{
+							fDirty = true;
+							break;
+						}
+					}
+				}
+				if (fDirty && !fForceQuit)
+				{
+					fForceQuit = true;
+					ShowMsg("Unsaved! Press ESC again to confirm.", function() { fForceQuit = false; });
+				}
+				else
+					FP.world = dgWorldPrev();
+			}
 				
 			if (Input.mouseWheel)
 			{

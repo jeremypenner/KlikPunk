@@ -71,7 +71,7 @@ package
 		{
 			var file: File = new File(File.userDirectory.nativePath + File.separator + "NewStage.xml");
 			file.addEventListener(Event.SELECT, function():void {
-				FP.world = new WorldStage(file.url);
+				FP.world = new WorldStage(file.url, function():World { return new WorldMenu(); });
 			});
 			
 			return file;

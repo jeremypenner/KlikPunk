@@ -1,10 +1,12 @@
 - decide on a license
-- create a readme
 - push to github
+- JSON output?
+- fixed-sized factories
 
 - finalize "library" notion
 - text objects
 - UI refactoring?
+- put it into a package
 
 - tilemap
 - layers
@@ -15,3 +17,5 @@ DONE:
 - zoom to 100% (magnifying glass icon?)
 - show 0,0, maybe some other griddy options
 - fix scrollwheel sensitivity
+- create a readme
+- quit to menu
