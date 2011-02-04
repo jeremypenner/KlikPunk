@@ -234,13 +234,14 @@ package
 				dragView = null;
 			}
 
+			var rgtok: Array;
 			if (Input.mousePressed)
 			{
 				if (Input.check(Key.SHIFT)) // shift-click -- begin view dragging
 					dragView = Drag.Claim();
 				else 						// click -- select a token
 				{
-					var rgtok: Array = [];
+					rgtok = [];
 					getLayer(LAYER_TOKENS, rgtok);
 					tokSelected = null;
 					// getLayer returns tokens in draw order, which means furthest back first
@@ -269,7 +270,7 @@ package
 				var fDirty:Boolean = false;
 				if (!fForceQuit)
 				{
-					var rgtok: Array = [];
+					rgtok = [];
 					getLayer(LAYER_TOKENS, rgtok);
 					for each (var tok:Token in rgtok)
 					{
@@ -283,7 +284,7 @@ package
 				if (fDirty && !fForceQuit)
 				{
 					fForceQuit = true;
-					ShowMsg("Unsaved! Press ESC again to confirm.", function() { fForceQuit = false; });
+					ShowMsg("Unsaved! Press ESC again to quit.", function():void { fForceQuit = false; });
 				}
 				else
 					FP.world = dgWorldPrev();
