@@ -235,6 +235,7 @@ package
 			}
 
 			var rgtok: Array;
+			var tok: Token;
 			if (Input.mousePressed)
 			{
 				if (Input.check(Key.SHIFT)) // shift-click -- begin view dragging
@@ -247,7 +248,7 @@ package
 					// getLayer returns tokens in draw order, which means furthest back first
 					for (var itok:int = rgtok.length - 1; itok >= 0; itok --)
 					{
-						var tok: Token = rgtok[itok];
+						tok = rgtok[itok];
 						if (tok.collidePoint(tok.x, tok.y, Input.mouseX, Input.mouseY))
 						{
 							tokSelected = tok;
@@ -272,7 +273,7 @@ package
 				{
 					rgtok = [];
 					getLayer(LAYER_TOKENS, rgtok);
-					for each (var tok:Token in rgtok)
+					for each (tok in rgtok)
 					{
 						if (tok.FDirty())
 						{
