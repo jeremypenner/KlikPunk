@@ -21,7 +21,7 @@ package
 		private var filewatcher: FileWatcher;
 		public function Factory(sidebar: Sidebar, urpf: String, bmp:BitmapData) 
 		{
-			super(sidebar, bmp);
+			super(sidebar, bmp, sidebar.width);
 			this.bmp = bmp;
 			this.urpf = urpf;
 		}
