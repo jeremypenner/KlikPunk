@@ -65,11 +65,11 @@ package
 		}
 		public function OpenStage(): void
 		{
-			FileForBrowse().browseForOpen("Find your thing", [new FileFilter("Stages", "*.xml")]);
+			FileForBrowse().browseForOpen("Find your thing", [new FileFilter("Stages", "*.stage")]);
 		}
 		private function FileForBrowse(): File
 		{
-			var file: File = new File(File.userDirectory.nativePath + File.separator + "NewStage.xml");
+			var file: File = new File(File.userDirectory.nativePath + File.separator + "NewStage.stage");
 			file.addEventListener(Event.SELECT, function():void {
 				FP.world = new WorldStage(file.url, function():World { return new WorldMenu(); });
 			});

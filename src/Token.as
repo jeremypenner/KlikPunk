@@ -21,10 +21,10 @@ package
 		private var drag: Drag;
 		public var posReal: Point;
 		private var urff: String;
-		private var xml: XML;
+		private var json: Object;
 		private var filewatcher: FileWatcher;
 		
-		public function Token(source:BitmapData, urff: String, x: int, y: int, xml:XML = null) 
+		public function Token(source:BitmapData, urff: String, x: int, y: int, json: Object = null) 
 		{
 			this.posReal = new Point(x, y);
 			super(x, y, new Image(source));
@@ -32,14 +32,15 @@ package
 			this.layer = WorldStage.LAYER_TOKENS;
 			this.drag = null;
 			this.urff = urff;
-			if (xml === null)
-				this.xml = XML("<token/>");
+
+			if (json === null)
+				this.json = { };
 			else
-				this.xml = xml;
+				this.json = json;
 		}
 		public function FDirty():Boolean
 		{
-			return int(xml.@x) !== posReal.x || int(xml.@y) !== posReal.y;
+			return json.x !== posReal.x || json.y !== posReal.y;
 		}
 		public function FSelected(): Boolean
 		{
@@ -139,15 +140,12 @@ package
 			if (FSelected())
 				Draw.hitbox(this);
 		}
-		
-		public function GenXML(): XML
+		public function GenJSON(): Object
 		{
-			var xml: XML = this.xml.copy();
-			xml.@x = int(posReal.x);
-			xml.@y = int(posReal.y);
-			xml.@path = urff;
-			this.xml = xml;
-			return xml;
+			this.json.x = int(posReal.x);
+			this.json.y = int(posReal.y);
+			this.json.path = urff;
+			return this.json;
 		}
 	}
 

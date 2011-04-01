@@ -42,6 +42,7 @@ package
 	import net.flashpunk.utils.Key;
 	import net.flashpunk.World;
 	import net.flashpunk.utils.Input;
+	import com.adobe.serialization.json.JSON;
 	/**
 	 * ...
 	 * @author jjp
@@ -355,12 +356,12 @@ package
 			zoom = 1;
 		}
 		
-		// persistence (save/load/XML generation)
+		// persistence (save/load/json generation)
 		public function Save(): void
 		{
 			var stream: FileStream = new FileStream();
 			stream.open(new File(UabFromUrf(urff)), FileMode.WRITE);
-			stream.writeUTFBytes(GenXML().toXMLString());
+			stream.writeUTFBytes(JSON.encode(GenJSON()));
 			stream.close();
 			ShowMsg("Saved.");
 		}
@@ -371,24 +372,24 @@ package
 			{
 				var stream: FileStream = new FileStream();
 				stream.open(file, FileMode.READ);
-				var xml: XML = XML(stream.readUTFBytes(file.size));
+				var json: Object = JSON.decode(stream.readUTFBytes(file.size));
 				var itoken:int = 0;
-				var rgtoken:Object = { ctokenLoaded: 0, ctoken: xml.children().length(), rgtoken: [] };
-				for each (var xmlToken: XML in xml.children())
+				var rgtoken:Object = { ctokenLoaded: 0, ctoken: json.tokens.length, rgtoken: [] };
+				for each (var jsonToken:Object in json.tokens)
 				{
-					LoadToken(xmlToken, itoken, rgtoken);
+					LoadToken(jsonToken, itoken, rgtoken);
 					itoken = itoken + 1;
 				}
 				ShowMsg("Loaded.");
 			}
 		}
-		private function LoadToken(xml: XML, itoken: int, rgtoken:Object): void
+		private function LoadToken(json: Object, itoken: int, rgtoken:Object): void
 		{
-			trace("loading " + xml.@path);
-			Imgdir.LoadBmp(new File(UabFromUrf(xml.@path)), 
+			trace("loading " + json.path);
+			Imgdir.LoadBmp(new File(UabFromUrf(json.path)), 
 				function(bmp: BitmapData, file: File):void {
-					trace("loadtoken: " + xml.@path);
-					var token: Token = new Token(bmp, xml.@path.toString(), int(xml.@x), int(xml.@y), xml);
+					trace("loadtoken: " + json.path);
+					var token: Token = new Token(bmp, json.path, json.x, json.y, json);
 					FixupTokens(rgtoken, token, itoken);
 				},
 				function():void 
@@ -410,15 +411,15 @@ package
 				}
 			}
 		}
-		public function GenXML():XML
+		public function GenJSON(): Object
 		{
-			var xml: XML = XML("<stage/>");
-			var rgtoken:Array = [];
+			var jsonTokens: Array = [];
+			var json: Object = { "tokens": jsonTokens };
+			var rgtoken: Array = [];
 			this.getLayer(LAYER_TOKENS, rgtoken);
 			for each(var token: Token in rgtoken)
-				xml.appendChild(token.GenXML());
-			
-			return xml;
+				jsonTokens.push(token.GenJSON());
+			return json;
 		}
 	}
 }

@@ -1,7 +1,6 @@
 - decide on a license
 - push to github
-- JSON output?
-- fixed-sized factories
+- human-readable JSON output
 
 - finalize "library" notion
 - text objects
@@ -19,3 +18,5 @@ DONE:
 - fix scrollwheel sensitivity
 - create a readme
 - quit to menu
+- fixed-sized factories
+- JSON output?
