@@ -136,7 +136,7 @@ package
 		}
 		public function Urfd(): String
 		{
-			return rgurpd.join("") + "/";
+			return rgurpd.join("");
 		}
 		
 		// left sidebar (folders and objects) management
