@@ -30,57 +30,75 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.adobe.serialization.json
-{
+package com.maccherone.json {
 
-	/**
-	 * This class provides encoding and decoding of the JSON format.
-	 *
-	 * Example usage:
-	 * <code>
-	 * 		// create a JSON string from an internal object
-	 * 		JSON.encode( myObject );
-	 *
-	 *		// read a JSON string into an internal object
-	 *		var myObject:Object = JSON.decode( jsonString );
-	 *	</code>
-	 */
-	public class JSON
-	{
+	public class JSONToken {
+	
+		private var _type:int;
+		private var _value:Object;
+		
 		/**
-		 * Encodes a object into a JSON string.
+		 * Creates a new JSONToken with a specific token type and value.
 		 *
-		 * @param o The object to create a JSON string for
-		 * @return the JSON string representing o
+		 * @param type The JSONTokenType of the token
+		 * @param value The value of the token
 		 * @langversion ActionScript 3.0
 		 * @playerversion Flash 9.0
 		 * @tiptext
 		 */
-		public static function encode( o:Object ):String
-		{	
-			return new JSONEncoder( o ).getString();
+		public function JSONToken( type:int = -1 /* JSONTokenType.UNKNOWN */, value:Object = null ) {
+			_type = type;
+			_value = value;
 		}
 		
 		/**
-		 * Decodes a JSON string into a native object.
-		 * 
-		 * @param s The JSON string representing the object
-		 * @param strict Flag indicating if the decoder should strictly adhere
-		 * 		to the JSON standard or not.  The default of <code>true</code>
-		 * 		throws errors if the format does not match the JSON syntax exactly.
-		 * 		Pass <code>false</code> to allow for non-properly-formatted JSON
-		 * 		strings to be decoded with more leniancy.
-		 * @return A native object as specified by s
-		 * @throw JSONParseError
+		 * Returns the type of the token.
+		 *
+		 * @see com.adobe.serialization.json.JSONTokenType
 		 * @langversion ActionScript 3.0
 		 * @playerversion Flash 9.0
 		 * @tiptext
 		 */
-		public static function decode( s:String, strict:Boolean = true ):*
-		{	
-			return new JSONDecoder( s, strict ).getValue();	
+		public function get type():int {
+			return _type;	
 		}
-	
-	}
+		
+		/**
+		 * Sets the type of the token.
+		 *
+		 * @see com.adobe.serialization.json.JSONTokenType
+		 * @langversion ActionScript 3.0
+		 * @playerversion Flash 9.0
+		 * @tiptext
+		 */
+		public function set type( value:int ):void {
+			_type = value;	
+		}
+		
+		/**
+		 * Gets the value of the token
+		 *
+		 * @see com.adobe.serialization.json.JSONTokenType
+		 * @langversion ActionScript 3.0
+		 * @playerversion Flash 9.0
+		 * @tiptext
+		 */
+		public function get value():Object {
+			return _value;	
+		}
+		
+		/**
+		 * Sets the value of the token
+		 *
+		 * @see com.adobe.serialization.json.JSONTokenType
+		 * @langversion ActionScript 3.0
+		 * @playerversion Flash 9.0
+		 * @tiptext
+		 */
+		public function set value ( v:Object ):void {
+			_value = v;	
+		}
 
+	}
+	
 }

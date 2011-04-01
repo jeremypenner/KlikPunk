@@ -1,4 +1,6 @@
 /*
+  Copyright (c) 2009, Lawrence S. Maccherone, Jr.
+  
   Copyright (c) 2008, Adobe Systems Incorporated
   All rights reserved.
 
@@ -30,58 +32,57 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.adobe.serialization.json {
+package com.maccherone.json
+{
 
 	/**
+	 * This class provides encoding and decoding of the JSON format.
 	 *
+	 * Example usage:
+	 * <code>
+	 * 		// create a JSON string from an internal object
+	 * 		JSON.encode( myObject );
 	 *
+	 *		// read a JSON string into an internal object
+	 *		var myObject:Object = JSON.decode( jsonString );
+	 *	</code>
 	 */
-	public class JSONParseError extends Error 	{
-	
-		/** The location in the string where the error occurred */
-		private var _location:int;
-		
-		/** The string in which the parse error occurred */
-		private var _text:String;
-	
+	public class JSON
+	{
 		/**
-		 * Constructs a new JSONParseError.
+		 * Encodes a object into a JSON string.
 		 *
-		 * @param message The error message that occured during parsing
+		 * @param o The object to create a JSON string for
+		 * @return the JSON string representing o
 		 * @langversion ActionScript 3.0
 		 * @playerversion Flash 9.0
 		 * @tiptext
 		 */
-		public function JSONParseError( message:String = "", location:int = 0, text:String = "") {
-			super( message );
-			name = "JSONParseError";
-			_location = location;
-			_text = text;
-		}
-
-		/**
-		 * Provides read-only access to the location variable.
-		 *
-		 * @return The location in the string where the error occurred
-		 * @langversion ActionScript 3.0
-		 * @playerversion Flash 9.0
-		 * @tiptext
-		 */
-		public function get location():int {
-			return _location;
+		public static function encode( o:Object, pretty:Boolean=false, maxLength:int=60 ):String
+		{	
+			return new JSONEncoder( o, pretty, maxLength ).getString();
 		}
 		
 		/**
-		 * Provides read-only access to the text variable.
-		 *
-		 * @return The string in which the error occurred
+		 * Decodes a JSON string into a native object.
+		 * 
+		 * @param s The JSON string representing the object
+		 * @param strict Flag indicating if the decoder should strictly adhere
+		 * 		to the JSON standard or not.  The default of <code>true</code>
+		 * 		throws errors if the format does not match the JSON syntax exactly.
+		 * 		Pass <code>false</code> to allow for non-properly-formatted JSON
+		 * 		strings to be decoded with more leniancy.
+		 * @return A native object as specified by s
+		 * @throw JSONParseError
 		 * @langversion ActionScript 3.0
 		 * @playerversion Flash 9.0
 		 * @tiptext
 		 */
-		public function get text():String {
-			return _text;
+		public static function decode( s:String, strict:Boolean = true ):*
+		{	
+			return new JSONDecoder( s, strict ).getValue();	
 		}
+	
 	}
-	
+
 }

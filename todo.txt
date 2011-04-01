@@ -1,6 +1,5 @@
 - decide on a license
 - push to github
-- human-readable JSON output
 
 - finalize "library" notion
 - text objects
@@ -19,4 +18,4 @@ DONE:
 - create a readme
 - quit to menu
 - fixed-sized factories
-- JSON output?
+- human-readable JSON output

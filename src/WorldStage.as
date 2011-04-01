@@ -42,7 +42,7 @@ package
 	import net.flashpunk.utils.Key;
 	import net.flashpunk.World;
 	import net.flashpunk.utils.Input;
-	import com.adobe.serialization.json.JSON;
+	import com.maccherone.json.JSON;
 	/**
 	 * ...
 	 * @author jjp
@@ -361,7 +361,7 @@ package
 		{
 			var stream: FileStream = new FileStream();
 			stream.open(new File(UabFromUrf(urff)), FileMode.WRITE);
-			stream.writeUTFBytes(JSON.encode(GenJSON()));
+			stream.writeUTFBytes(JSON.encode(GenJSON(), true, 80));
 			stream.close();
 			ShowMsg("Saved.");
 		}

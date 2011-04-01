@@ -1,4 +1,6 @@
 /*
+  Copyright (c) 2009, Lawrence S. Maccherone, Jr.
+  
   Copyright (c) 2008, Adobe Systems Incorporated
   All rights reserved.
 
@@ -30,7 +32,7 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.adobe.serialization.json 
+package com.maccherone.json 
 {
 
 	import flash.utils.describeType;
@@ -40,6 +42,17 @@ package com.adobe.serialization.json
 		/** The string that is going to represent the object we're encoding */
 		private var jsonString:String;
 		
+		/** The current level */
+		private var level:int;
+		
+		/** Above this length, an object or array will be split into multiple lines. Any value 2 or below will always split. */
+		private var maxLength:int;
+		
+		/** When true, the encoder will add spaces and split Arrays and Objects over maxLength into multiple lines */
+		private var pretty:Boolean;
+		
+		static private const tabWidth:int = 4;
+		
 		/**
 		 * Creates a new JSONEncoder.
 		 *
@@ -48,9 +61,15 @@ package com.adobe.serialization.json
 		 * @playerversion Flash 9.0
 		 * @tiptext
 		 */
-		public function JSONEncoder( value:* ) {
+		public function JSONEncoder( value:*, pretty:Boolean=false, maxLength:int=60 ) {
+			level = 0;
+			this.pretty = pretty;
+			if (pretty) {
+				this.maxLength = maxLength;
+			} else {
+				this.maxLength = int.MAX_VALUE;
+			}
 			jsonString = convertToString( value );
-		
 		}
 		
 		/**
@@ -74,6 +93,8 @@ package com.adobe.serialization.json
 		 */
 		private function convertToString( value:* ):String {
 			
+			var temp:String;
+			
 			// determine what value is and convert it based on it's type
 			if ( value is String ) {
 				
@@ -82,7 +103,7 @@ package com.adobe.serialization.json
 				
 			} else if ( value is Number ) {
 				
-				// only encode numbers that finate
+				// only encode numbers that are finite
 				return isFinite( value as Number) ? value.toString() : "null";
 
 			} else if ( value is Boolean ) {
@@ -92,13 +113,28 @@ package com.adobe.serialization.json
 
 			} else if ( value is Array ) {
 			
-				// call the helper method to convert an array
-				return arrayToString( value as Array );
+				if (maxLength <= 2) {
+					temp = arrayToStringPretty( value as Array );
+				} else {
+					// call the helper method to convert an array
+					temp = arrayToString( value as Array );
+					if (temp.length > maxLength) {
+						temp = arrayToStringPretty( value as Array );
+					}
+				}
+				return temp;
 			
 			} else if ( value is Object && value != null ) {
-			
-				// call the helper method to convert an object
-				return objectToString( value );
+				if (maxLength <= 2) {
+					temp = objectToStringPretty( value );
+				} else {			
+					// call the helper method to convert an object
+					temp = objectToString( value );
+					if (temp.length > maxLength) {
+						temp = objectToStringPretty( value );
+					}
+				}	
+				return temp;				
 			}
             return "null";
 		}
@@ -201,6 +237,9 @@ package com.adobe.serialization.json
 				if ( s.length > 0 ) {
 					// we've already added an element, so add the comma separator
 					s += ","
+					if (pretty) {
+						s += " "
+					}
 				}
 				
 				// convert the value to a string
@@ -225,6 +264,37 @@ package com.adobe.serialization.json
 						
 			// close the array and return it's string value
 			return "[" + s + "]";
+		}
+		
+		/**
+		 * Converts an array to it's JSON string equivalent using multiple lines
+		 *
+		 * @param a The array to convert
+		 * @return The JSON string representation of <code>a</code>
+		 */
+		private function arrayToStringPretty( a:Array ):String {
+			level++;
+			
+			// create a string to store the array's jsonstring value
+			var s:String = "";
+			
+			// loop over the elements in the array and add their converted
+			// values to the string
+			for ( var i:int = 0; i < a.length; i++ ) {
+				// when the length is 0 we're adding the first element so
+				// no comma is necessary
+				if ( s.length > 0 ) {
+					// we've already added an element, so add the comma separator
+					s += ",\n"
+				}
+				
+				// convert the value to a string
+				s += getPadding(level) + convertToString( a[i] );	
+			}
+			
+			// close the array and return it's string value
+			level--;
+			return "[" + "\n" + s + "\n" + getPadding(level) + "]";
 		}
 		
 		/**
@@ -266,44 +336,129 @@ package com.adobe.serialization.json
 					if ( s.length > 0 ) {
 						// we've already added an item, so add the comma separator
 						s += ","
+						if (pretty) {
+							s += " "
+						}
 					}
 					
-					s += escapeString( key ) + ":" + convertToString( value );
+					s += escapeString( key ) + ":" 
+					if (pretty) {
+						s += " "
+					}
+					s += convertToString( value );
 				}
 			}
 			else // o is a class instance
 			{
 				// Loop over all of the variables and accessors in the class and 
 				// serialize them along with their values.
-				for each ( var v:XML in classInfo..*.( 
-					name() == "variable"
-					||
-					( 
-						name() == "accessor"
-						// Issue #116 - Make sure accessors are readable
-						&& attribute( "access" ).charAt( 0 ) == "r" ) 
-					) )
+				for each ( var v:XML in classInfo..*.( name() == "variable" || name() == "accessor" ) )
 				{
-					// Issue #110 - If [Transient] metadata exists, then we should skip
-					if ( v.metadata && v.metadata.( @name == "Transient" ).length() > 0 )
-					{
-						continue;
-					}
-					
 					// When the length is 0 we're adding the first item so
 					// no comma is necessary
 					if ( s.length > 0 ) {
 						// We've already added an item, so add the comma separator
 						s += ","
+						if (pretty) {
+							s += " "
+						}
 					}
 					
-					s += escapeString( v.@name.toString() ) + ":" 
-							+ convertToString( o[ v.@name ] );
+					s += escapeString( v.@name.toString() ) + ":"
+					if (pretty) {
+						s += " "
+					}
+					s += convertToString( o[ v.@name ] );
 				}
 				
 			}
 			
 			return "{" + s + "}";
+		}
+		
+		/**
+		 * Converts an object to it's JSON string equivalent with multiple lines
+		 *
+		 * @param o The object to convert
+		 * @return The JSON string representation of <code>o</code>
+		 */
+		private function objectToStringPretty( o:Object ):String
+		{
+			level++;
+			
+			// create a string to store the object's jsonstring value
+			var s:String = "";
+			
+			// determine if o is a class instance or a plain object
+			var classInfo:XML = describeType( o );
+			if ( classInfo.@name.toString() == "Object" )
+			{
+				// the value of o[key] in the loop below - store this 
+				// as a variable so we don't have to keep looking up o[key]
+				// when testing for valid values to convert
+				var value:Object;
+				
+				// loop over the keys in the object and add their converted
+				// values to the string
+				for ( var key:String in o )
+				{
+					// assign value to a variable for quick lookup
+					value = o[key];
+					
+					// don't add function's to the JSON string
+					if ( value is Function )
+					{
+						// skip this key and try another
+						continue;
+					}
+					
+					// when the length is 0 we're adding the first item so
+					// no comma is necessary
+					if ( s.length > 0 ) {
+						// we've already added an item, so add the comma separator
+						s += ",\n"
+					}
+					
+					s += getPadding(level) + escapeString( key ) + ":" 
+					if (pretty) {
+						s += " "
+					}
+					s += convertToString( value );
+				}
+			}
+			else // o is a class instance
+			{
+				// Loop over all of the variables and accessors in the class and 
+				// serialize them along with their values.
+				for each ( var v:XML in classInfo..*.( name() == "variable" || name() == "accessor" ) )
+				{
+					// When the length is 0 we're adding the first item so
+					// no comma is necessary
+					if ( s.length > 0 ) {
+						// We've already added an item, so add the comma separator
+						s += ",\n"
+					}
+					
+					s += getPadding(level) + escapeString( v.@name.toString() ) + ":"
+					if (pretty) {
+						s += " "
+					}
+					s += convertToString( o[ v.@name ] );
+				}
+				
+			}
+			
+			level--;
+			return "{" + "\n" + s + "\n" + getPadding(level) + "}";
+		}
+				
+		private static function getPadding(level:int):String {
+			var length:int = level * tabWidth;
+			var s:String = "";
+			for (var i:int=1; i<=length; i++) {
+				s += " ";
+			}
+			return s;
 		}
 
 		
