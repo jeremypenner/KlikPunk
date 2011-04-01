@@ -22,7 +22,7 @@ package
 			SetScale(sidebar);
 			super(sidebar, h < 0 ? img.scaledHeight : h, img);
 		}
-		private function SetScale(sidebar: Sidebar)
+		private function SetScale(sidebar: Sidebar): void
 		{
 			var scale:Number = sidebar.width / img.width;
 			if (h >= 0)
