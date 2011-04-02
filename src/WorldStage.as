@@ -65,6 +65,7 @@ package
 		private var dragView: Drag;
 		private var urff: String;
 		private var rgurpd: Array;
+		private var json: Object;
 		private var alarmImgdir: Tween;
 		private var rgsidebar: Vector.<Sidebar>;
 		
@@ -86,6 +87,7 @@ package
 			this.uabd = match[1];
 			this.urff = match[2];
 			this.rgurpd = [];
+			this.json = { };
 			this.rgsidebar = new Vector.<Sidebar>();
 			
 			var sidebarSave: Sidebar = AddSidebar(new Sidebar(FP.width - 32, FP.width, FP.height - 64, FP.height - 64, 32, 64, LAYER_SAVE, false, false));
@@ -372,7 +374,7 @@ package
 			{
 				var stream: FileStream = new FileStream();
 				stream.open(file, FileMode.READ);
-				var json: Object = JSON.decode(stream.readUTFBytes(file.size));
+				this.json = JSON.decode(stream.readUTFBytes(file.size));
 				var itoken:int = 0;
 				var rgtoken:Object = { ctokenLoaded: 0, ctoken: json.tokens.length, rgtoken: [] };
 				for each (var jsonToken:Object in json.tokens)
@@ -414,11 +416,11 @@ package
 		public function GenJSON(): Object
 		{
 			var jsonTokens: Array = [];
-			var json: Object = { "tokens": jsonTokens };
 			var rgtoken: Array = [];
 			this.getLayer(LAYER_TOKENS, rgtoken);
 			for each(var token: Token in rgtoken)
 				jsonTokens.push(token.GenJSON());
+			json.tokens = jsonTokens;
 			return json;
 		}
 	}
