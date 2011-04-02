@@ -122,7 +122,7 @@ package
 		}
 		public function PointScreenFromReal(pointReal: Point) : Point
 		{
-			return new Point((pointReal.x - pointView.x) * zoom, (pointReal.y - pointView.y) * zoom);
+			return new Point((int(pointReal.x) - pointView.x) * zoom, (int(pointReal.y) - pointView.y) * zoom);
 		}
 		
 		// path management helpers
